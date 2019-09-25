@@ -1,35 +1,37 @@
 <template>
-  <div class="recommend">
-    <div class="recommend-content">
-      <div class="slide-wrapper"
-      v-if="recommends.length">
-        <slider>
-          <div v-for="(item,id) in recommends"
-            :key="id">
-            <a :href="item.linkUrl">
-              <img :src="item.picUrl" />
-            </a>
-          </div>
-        </slider>
-      </div>
-      <div class="recommend-list">
-        <h1 class="list-title"></h1>
-        <ul>
-
-        </ul>
-      </div>
-    </div> 
-  </div> 
+  <div>
+    <div  v-if="recommends.length" id="bull">
+      <swiper :options="swiperOption">
+        <swiper-slide v-for="(item,id) in recommends" :key="id">
+          <img :src="item.picUrl" />
+        </swiper-slide>
+        <div class="swiper-pagination" slot="pagination"></div>
+      </swiper>
+    </div>
+    <div v-for="(item ,id) in radiolists" :key="id">
+       <img :src="item.picUrl" />
+    </div>
+  </div>
 </template>
 
 <script type="text/ecmascript-6">
   import Slider from 'base/slider/slider'
   import {getRecommend } from 'api/recommend'
   import {ERR_OK} from 'api/config'
+
+
   export default {
     data(){
       return {
-        recommends: []
+        recommends: [],
+        radiolists: [],
+        swiperOption: {
+          loop: true,
+          autoplay:true,
+        pagination: {
+            el: '.swiper-pagination',
+          }
+        }
       }
     },
     created() {
@@ -40,7 +42,8 @@
         getRecommend().then((res) => {
           if(res.code === ERR_OK){
             this.recommends = res.data.slider
-            console.log(this.recommends)
+            this.radiolists = res.data.radioList
+            console.log(this.radiolists)
           }
         })
       }
@@ -55,6 +58,13 @@
 <style scoped lang="stylus" rel="stylesheet/stylus">
   @import "~common/stylus/variable"
 
+  .swiper-slide img
+    position: relative
+    width: 100%
+    height:150px
+    overflow: hidden
+  #bull >>> .swiper-pagination-bullet-active
+    background: #fff
   .recommend
     position: fixed
     width: 100%
